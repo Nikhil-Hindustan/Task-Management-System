@@ -1,0 +1,96 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GSA Techworld</title>
+    <script>
+        async function register() {
+            const data = {
+                name: document.getElementById('register_name').value,
+                email: document.getElementById('register_email').value,
+                mobile_number: document.getElementById('register_mobile').value,
+                password: document.getElementById('register_password').value,
+                address: document.getElementById('register_address').value,
+                latitude: parseFloat(document.getElementById('register_latitude').value),
+                longitude: parseFloat(document.getElementById('register_longitude').value)
+            };
+            const response = await fetch('/register/', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            alert(result.message || result.error);
+        }
+
+        async function login() {
+            const data = {
+                email: document.getElementById('login_email').value,
+                password: document.getElementById('login_password').value
+            };
+            const response = await fetch('/login/', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            alert(result.message || result.error);
+        }
+
+        async function addTask() {
+            const data = {
+                name: document.getElementById('task_name').value,
+                date_time: document.getElementById('task_datetime').value,
+                assigned_to: parseInt(document.getElementById('task_assigned_to').value)
+            };
+            const response = await fetch('/add_task/', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            alert(result.message || result.error);
+        }
+
+        async function viewTasks() {
+            const response = await fetch('/view_tasks/', {
+                method: 'GET',
+            });
+            const tasks = await response.json();
+            let taskList = '';
+            tasks.forEach(task => {
+                taskList += `<li>${task.name} - ${task.date_time} - ${task.assigned_to__name} - ${task.status}</li>`;
+            });
+            document.getElementById('task_list').innerHTML = taskList;
+        }
+    </script>
+</head>
+<body>
+    <h1>GSA Techworld</h1>
+    
+    <h2>Register</h2>
+    <input type="text" id="register_name" placeholder="Name" /><br/>
+    <input type="email" id="register_email" placeholder="Email" /><br/>
+    <input type="text" id="register_mobile" placeholder="Mobile Number" /><br/>
+    <input type="password" id="register_password" placeholder="Password" /><br/>
+    <input type="text" id="register_address" placeholder="Address" /><br/>
+    <input type="text" id="register_latitude" placeholder="Latitude" /><br/>
+    <input type="text" id="register_longitude" placeholder="Longitude" /><br/>
+    <button onclick="register()">Register</button>
+
+    <h2>Login</h2>
+    <input type="email" id="login_email" placeholder="Email" /><br/>
+    <input type="password" id="login_password" placeholder="Password" /><br/>
+    <button onclick="login()">Login</button>
+
+    <h2>Add Task</h2>
+    <input type="text" id="task_name" placeholder="Task Name" /><br/>
+    <input type="datetime-local" id="task_datetime" placeholder="Date and Time" /><br/>
+    <input type="number" id="task_assigned_to" placeholder="Assigned To (User ID)" /><br/>
+    <button onclick="addTask()">Add Task</button>
+
+    <h2>View Tasks</h2>
+    <button onclick="viewTasks()">View Tasks</button>
+    <ul id="task_list"></ul>
+</body>
+</html>
